@@ -58,7 +58,10 @@ export default function Navbar() {
               <Link to={"/"}>Now Playing</Link>
             </li>
             <li>
-              <Link to={"/popular"}>Popular Movie</Link>
+              <Link to={"/popular"}>Popular Movies</Link>
+            </li>
+            <li>
+              <Link to={"/movies"}>All Movies</Link>
             </li>
           </ul>
         </div>
@@ -66,12 +69,12 @@ export default function Navbar() {
         {/* Profile */}
         <div className="navbar-end">
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
-                <img
-                  alt="Tailwind CSS Navbar component"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                />
+                <img alt="Photo Profile" src="/assets/images/penguin.png" />
               </div>
             </div>
 

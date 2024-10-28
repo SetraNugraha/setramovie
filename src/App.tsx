@@ -5,6 +5,7 @@ import NowPlaying from "./pages/NowPlaying"
 import PopularMovie from "./pages/PopularMovie"
 import FavoriteMovie from "./pages/FavoriteMovie"
 import PrivateRoute from "./pages/PrivateRoute"
+import AllMovies from "./pages/AllMovies"
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path={"/login"} element={<Login />} />
         <Route element={<PrivateRoute />}>
           <Route path={"/"} element={<NowPlaying />} />
+          <Route path={"/movies"} element={<AllMovies />} />
           <Route path={"/popular"} element={<PopularMovie />} />
           <Route path={"/favorite"} element={<FavoriteMovie />} />
         </Route>

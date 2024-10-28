@@ -5,14 +5,39 @@ import { useMovies } from "../hooks/useMovies"
 import { useEffect } from "react"
 
 export default function NowPlaying() {
-  const { nowPlayingMovies, getNowPlayingMovies, isLoading } = useMovies()
+  const {
+    nowPlayingMovies,
+    upcomingMovies,
+    isLoading,
+    getNowPlayingMovies,
+    getUpcomingMovies,
+  } = useMovies()
 
   useEffect(() => {
     getNowPlayingMovies()
   }, [])
 
-  const MovieList = () => {
+  const RenderNowPlaying = () => {
     return nowPlayingMovies.map((movie) => {
+      return (
+        <CardMovie
+          key={movie.id}
+          movieId={movie.id}
+          poster={movie.poster_path}
+          title={movie.title}
+          date={movie.release_date}
+          vote={parseFloat(movie.vote_average.toFixed(1))}
+        />
+      )
+    })
+  }
+
+  useEffect(() => {
+    getUpcomingMovies()
+  }, [])
+
+  const RenderUpcomingMovies = () => {
+    return upcomingMovies.map((movie) => {
       return (
         <CardMovie
           key={movie.id}
@@ -38,12 +63,26 @@ export default function NowPlaying() {
           <h1>Now Playing Movie</h1>
         </div>
 
-        {/* Card Movie */}
+        {/* Card Movie Now Playing */}
         <div className="grid grid-cols-3 gap-5">
           {isLoading ? (
             <p className="ml-5 font-semibold text-xl">Loading Movies ...</p>
           ) : (
-            <MovieList />
+            <RenderNowPlaying />
+          )}
+        </div>
+
+        {/* Upcomming Movies */}
+        <div className="ml-5 text-3xl font-semibold tracking-wider my-10">
+          <h1>Upcoming Movie</h1>
+        </div>
+
+         {/* Card Upcoming Movie*/}
+         <div className="grid grid-cols-3 gap-5">
+          {isLoading ? (
+            <p className="ml-5 font-semibold text-xl">Loading Movies ...</p>
+          ) : (
+            <RenderUpcomingMovies />
           )}
         </div>
       </section>

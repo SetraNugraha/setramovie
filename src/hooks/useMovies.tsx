@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { useState } from "react"
 
 interface Movies {
@@ -16,10 +16,63 @@ export const useMovies = () => {
   const data = localStorage.getItem("user")
   const user = data ? JSON.parse(data) : ""
 
+  const [upcomingMovies, setUpcomingMovies] = useState<Movies[]>([])
+  const [allMovies, setAllMovies] = useState<Movies[]>([])
   const [nowPlayingMovies, setNowPlayingMovies] = useState<Movies[]>([])
   const [popularMovies, setPopularMovies] = useState<Movies[]>([])
   const [favoriteMovies, setFavoriteMovies] = useState<Movies[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const getAllMovies = async () => {
+    setIsLoading(true)
+    const limit: number = 100
+    let currPage: number = 45
+    const arrMovies: Movies[] = []
+    try {
+      while (arrMovies.length < limit) {
+        const response = await axios.get(`${baseURL}/movie/popular`, {
+          params: {
+            api_key: apiKey,
+            page: currPage,
+          },
+        })
+
+        const movies = response.data.results
+        // [{}, {}, {}] => {}, {}, {}
+        arrMovies.push(...movies)
+        currPage++
+      }
+
+      setAllMovies(arrMovies)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const getUpcomingMovies = async () => {
+    setIsLoading(true)
+    try {
+      const response = await axios.get(`${baseURL}/movie/upcoming`, {
+        params: {
+          api_key: apiKey,
+          page: 15,
+        },
+      })
+
+      const movie = response.data.results
+      const slicedMovie = movie.slice(0, 3)
+      setUpcomingMovies(slicedMovie)
+    } catch (error) {
+      console.log(error)
+      if (error instanceof AxiosError) {
+        return error
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const getNowPlayingMovies = async () => {
     const limit = 6
@@ -45,7 +98,7 @@ export const useMovies = () => {
   const getPopularMovies = async () => {
     setIsLoading(true)
     const maxMovies: number = 30
-    let currentPage: number = 1
+    let currentPage: number = 32
     const allMovies: Movies[] = []
 
     try {
@@ -99,7 +152,10 @@ export const useMovies = () => {
     }
   }
 
-  const handleActionFavorite = async (movieId: number, favoriteStatus: boolean) => {
+  const handleActionFavorite = async (
+    movieId: number,
+    favoriteStatus: boolean,
+  ) => {
     try {
       if (user.accountId === null) {
         return false
@@ -127,7 +183,7 @@ export const useMovies = () => {
       if (favoriteStatus === false) {
         window.location.reload()
       }
-      
+
       return response.data
     } catch (error) {
       console.log(error)
@@ -136,12 +192,15 @@ export const useMovies = () => {
 
   const checkStatus = async (movieId: number) => {
     try {
-      const response = await axios.get(`${baseURL}/movie/${movieId}/account_states`, {
-        params: {
-          api_key: apiKey,
-          session_id: user.sessionId,
+      const response = await axios.get(
+        `${baseURL}/movie/${movieId}/account_states`,
+        {
+          params: {
+            api_key: apiKey,
+            session_id: user.sessionId,
+          },
         },
-      })
+      )
 
       return response.data.favorite
     } catch (error) {
@@ -152,11 +211,15 @@ export const useMovies = () => {
 
   return {
     user,
+    allMovies,
     nowPlayingMovies,
+    upcomingMovies,
     popularMovies,
     favoriteMovies,
     isLoading,
+    getAllMovies,
     getFavoriteMovies,
+    getUpcomingMovies,
     getPopularMovies,
     getNowPlayingMovies,
     handleActionFavorite,
