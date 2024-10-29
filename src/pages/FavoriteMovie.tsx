@@ -16,16 +16,7 @@ export default function FavoriteMovie() {
       <p className="ml-6">You dont have favorite movies.</p>
     ) : (
       favoriteMovies.map((movie) => {
-        return (
-          <CardMovie
-            key={movie.id}
-            movieId={movie.id}
-            poster={movie.poster_path}
-            title={movie.title}
-            date={movie.release_date}
-            vote={parseFloat(movie.vote_average.toFixed(1))}
-          />
-        )
+        return <CardMovie key={movie.id} movieId={movie.id} poster={movie.poster_path} title={movie.title} date={movie.release_date} vote={parseFloat(movie.vote_average.toFixed(1))} />
       })
     )
   }
@@ -43,13 +34,7 @@ export default function FavoriteMovie() {
         </div>
 
         {/* Card Movie */}
-        <div className="grid grid-cols-3 gap-5">
-          {isLoading ? (
-            <p className="ml-5 font-semibold text-xl">Loading Movies ...</p>
-          ) : (
-            <FavoriteMovieList />
-          )}
-        </div>
+        <div className="grid grid-cols-3 gap-5">{isLoading ? <p className="ml-5 font-semibold text-xl">Loading Movies ...</p> : <FavoriteMovieList />}</div>
       </section>
     </>
   )

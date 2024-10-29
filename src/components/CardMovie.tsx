@@ -2,6 +2,7 @@
 import { FaHeart } from "react-icons/fa"
 import { useMovies } from "../hooks/useMovies"
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 
 interface CardMovieProps {
   movieId: number
@@ -11,13 +12,7 @@ interface CardMovieProps {
   poster: string
 }
 
-export default function CardMovie({
-  movieId,
-  title,
-  date,
-  vote,
-  poster,
-}: CardMovieProps) {
+export default function CardMovie({ movieId, title, date, vote, poster }: CardMovieProps) {
   const imageULR = import.meta.env.VITE_BASEIMGURL
   const [isFavorite, setIsFavorite] = useState<boolean>(false)
   const { user, handleActionFavorite, checkStatus } = useMovies()
@@ -26,10 +21,21 @@ export default function CardMovie({
     const status = await checkStatus(movieId)
     const currentStatus = status
     const newStatus = !currentStatus
-    await handleActionFavorite(movieId, newStatus)
-    setIsFavorite(newStatus)
+    const result = await handleActionFavorite(movieId, newStatus)
 
-    alert(newStatus ? "Added to favorite" : "Removed from favorite")
+    if (result) {
+      setIsFavorite(newStatus)
+
+      if (newStatus) {
+        toast.success("Added to favorite", {
+          theme: "dark",
+        })
+      } else {
+        toast.error("Removed from favorite", {
+          theme: "dark",
+        })
+      }
+    }
   }
 
   useEffect(() => {

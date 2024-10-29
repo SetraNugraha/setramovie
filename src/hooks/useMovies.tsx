@@ -46,6 +46,9 @@ export const useMovies = () => {
       setAllMovies(arrMovies)
     } catch (error) {
       console.log(error)
+      if (error instanceof AxiosError) {
+        return alert("Sorry, an error occurred")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -67,7 +70,7 @@ export const useMovies = () => {
     } catch (error) {
       console.log(error)
       if (error instanceof AxiosError) {
-        return error
+        return alert("Sorry, an error occurred")
       }
     } finally {
       setIsLoading(false)
@@ -89,7 +92,9 @@ export const useMovies = () => {
       setNowPlayingMovies(results)
     } catch (error) {
       console.log(error)
-      throw error
+      if (error instanceof AxiosError) {
+        return alert("Sorry, an error occurred")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -119,7 +124,9 @@ export const useMovies = () => {
       setPopularMovies(results)
     } catch (error) {
       console.log(error)
-      throw error
+      if (error instanceof AxiosError) {
+        return alert("Sorry, an error occurred")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -132,30 +139,44 @@ export const useMovies = () => {
         return false
       }
 
-      const response = await axios.get(
-        `${baseURL}/account/${user.accountId}/favorite/movies`,
-        {
-          params: {
-            api_key: apiKey,
-            session_id: user.sessionId,
-          },
+      const response = await axios.get(`${baseURL}/account/${user.sessionId}/favorite/movies`, {
+        params: {
+          api_key: apiKey,
+          session_id: user.sessionId,
         },
-      )
+      })
 
       setFavoriteMovies(response.data.results)
       return response
     } catch (error) {
       console.log(error)
-      throw error
+      if (error instanceof AxiosError) {
+        return alert("Sorry, an error occurred")
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleActionFavorite = async (
-    movieId: number,
-    favoriteStatus: boolean,
-  ) => {
+  const searchMovie = async (query: string) => {
+    try {
+      const response = await axios.get(`${baseURL}/search/movie`, {
+        params: {
+          api_key: apiKey,
+          query: query,
+        },
+      })
+
+      return response.data
+    } catch (error) {
+      console.log(error)
+      if (error instanceof AxiosError) {
+        return alert("Sorry, an error occurred")
+      }
+    }
+  }
+
+  const handleActionFavorite = async (movieId: number, favoriteStatus: boolean) => {
     try {
       if (user.accountId === null) {
         return false
@@ -176,36 +197,42 @@ export const useMovies = () => {
         },
       )
 
+      console.log(response.data)
+
       if (!response.data.success) {
         alert("Some error happened")
       }
 
       if (favoriteStatus === false) {
-        window.location.reload()
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
       }
 
-      return response.data
+      return response.data.success
     } catch (error) {
       console.log(error)
+      if (error instanceof AxiosError) {
+        return alert("Sorry, an error occurred")
+      }
     }
   }
 
   const checkStatus = async (movieId: number) => {
     try {
-      const response = await axios.get(
-        `${baseURL}/movie/${movieId}/account_states`,
-        {
-          params: {
-            api_key: apiKey,
-            session_id: user.sessionId,
-          },
+      const response = await axios.get(`${baseURL}/movie/${movieId}/account_states`, {
+        params: {
+          api_key: apiKey,
+          session_id: user.sessionId,
         },
-      )
+      })
 
       return response.data.favorite
     } catch (error) {
       console.log(error)
-      throw error
+      if (error instanceof AxiosError) {
+        return alert("Sorry, an error occurred")
+      }
     }
   }
 
@@ -222,6 +249,7 @@ export const useMovies = () => {
     getUpcomingMovies,
     getPopularMovies,
     getNowPlayingMovies,
+    searchMovie,
     handleActionFavorite,
     checkStatus,
   }

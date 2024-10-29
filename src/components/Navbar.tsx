@@ -1,9 +1,9 @@
 import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
 
 export default function Navbar() {
   const baseURL = import.meta.env.VITE_BASEURL
-  // const token = import.meta.env.VITE_TOKEN
   const apiKey = import.meta.env.VITE_APIKEY
   const navigate = useNavigate()
 
@@ -30,9 +30,11 @@ export default function Navbar() {
         },
       })
       if (response.status === 200) {
-        alert("Logout success")
         localStorage.removeItem("user")
-        window.location.reload()
+        toast.success("Logout success", {
+          theme: "dark",
+        })
+        navigate("/login")
       }
 
       return response
@@ -68,24 +70,19 @@ export default function Navbar() {
 
         {/* Profile */}
         <div className="navbar-end">
+          {/* Username */}
+          <p className="mr-5 tracking-widest font-semibold text-lg">{username}</p>
+
+          {/* Profile Image */}
           <div className="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle avatar">
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
                 <img alt="Photo Profile" src="/assets/images/penguin.png" />
               </div>
             </div>
 
             {/* Children Profile */}
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-300 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-              <li>
-                <a className="justify-between">Hello, {username}</a>
-              </li>
-
+            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-300 rounded-box z-[1] mt-3 w-52 p-2 shadow">
               {user.isAuth ? (
                 <>
                   <li>

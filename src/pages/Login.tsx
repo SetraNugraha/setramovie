@@ -1,6 +1,8 @@
 import axios, { AxiosError } from "axios"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 export default function Login() {
   const baseURL = import.meta.env.VITE_BASEURL
@@ -64,12 +66,17 @@ export default function Login() {
         username: formLogin.username,
         sessionId: newSessionResponse.data.session_id,
       }
-      alert(`Welcome, ${formLogin.username}`)
+      toast.success(`Welcome, ${formLogin.username}`, {
+        theme: "dark",
+      })
       localStorage.setItem("user", JSON.stringify(user))
       navigate("/")
     } catch (error) {
       if (error instanceof AxiosError) {
-        alert("Incorrect username or password")
+        toast.error("Incorrect username or password", {
+          theme: "dark",
+          position: 'top-center'
+        })
       }
     } finally {
       setIsLoading(false)
@@ -78,9 +85,7 @@ export default function Login() {
 
   const handleGuest = async (): Promise<void> => {
     try {
-      const response = await axios.get(
-        `${baseURL}/authentication/guest_session/new?api_key=${apiKey}`,
-      )
+      const response = await axios.get(`${baseURL}/authentication/guest_session/new?api_key=${apiKey}`)
 
       const user = {
         isAuth: false,
@@ -92,6 +97,9 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(user))
 
       navigate("/")
+      toast.success("Success login as Guest", {
+        theme: "dark",
+      })
     } catch (error) {
       console.log(error)
     }
@@ -100,14 +108,13 @@ export default function Login() {
   return (
     <>
       <div className="hero my-auto min-h-screen">
+        {/* Card Form Login */}
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-          <form onSubmit={handleLogin} className="card-body">
-            <h1 className="text-2xl font-semibold tracking-wider mb-3">
-              SetraMovie Login
-            </h1>
+          <form onSubmit={handleLogin} className="card-body ring-2 rounded-xl">
+            <h1 className="text-2xl font-semibold tracking-wider mb-3">SetraMovie Login</h1>
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Username</span>
+                <span className="label-text font-semibold tracking-wider">Username</span>
               </label>
               <input
                 type="text"
@@ -125,7 +132,7 @@ export default function Login() {
             </div>
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Password</span>
+                <span className="label-text font-semibold tracking-wider">Password</span>
               </label>
               <input
                 type="password"
@@ -142,19 +149,25 @@ export default function Login() {
               />
             </div>
             <div className="form-control mt-6 flex flex-col gap-y-3">
-              <button
-                disabled={isLoading}
-                className="btn btn-primary disabled:bg-slate-300 disabled:text-slate-700 disabled:cursor-wait">
+              {/* Auth Login */}
+              <button disabled={isLoading} className="btn btn-primary disabled:bg-slate-300 disabled:text-slate-700 disabled:cursor-wait">
                 {isLoading ? "Process Authentication ..." : "Login"}
               </button>
+
+              {/* Guest */}
+              <button type="button" onClick={handleGuest} disabled={isLoading} className="btn btn-accent">
+                Login As Guest
+              </button>
             </div>
+
+            {/* Register */}
+            <p className="text-sm text-center mt-2 tracking-wider">
+              Register here
+              <a href="https://www.themoviedb.org/signup" target="_blank" className="text-blue-500 ml-1 hover:underline">
+                TMDB Official Website
+              </a>
+            </p>
           </form>
-          <button
-            onClick={handleGuest}
-            disabled={isLoading}
-            className="btn btn-accent mx-8 mb-5">
-            Login As Guest
-          </button>
         </div>
       </div>
     </>
