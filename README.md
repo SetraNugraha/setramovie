@@ -24,10 +24,17 @@ Install dependencies
   npm install
 ```
 
-If you still get error, try run :
+If you get error, try run :
 
 ```bash
   rm -rf node_modules package-lock.json
+  npm install
+```
+
+remove pnpm if you use npm :
+
+```bash
+  rm -rf pnpm-lock.yaml node_modules
   npm install
 ```
 
