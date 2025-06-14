@@ -13,7 +13,7 @@ interface CardMovieProps {
 }
 
 export default function CardMovie({ movieId, title, date, vote, poster }: CardMovieProps) {
-  const imageULR = import.meta.env.VITE_BASEIMGURL
+  const imageURL = import.meta.env.VITE_BASEIMGURL
   const [isFavorite, setIsFavorite] = useState<boolean>(false)
   const { user, handleActionFavorite, checkStatus } = useMovies()
 
@@ -61,7 +61,7 @@ export default function CardMovie({ movieId, title, date, vote, poster }: CardMo
     <>
       <div className="card card-side mx-auto bg-base-300 shadow-xl w-[500px]">
         <figure>
-          <img src={`${imageULR}/${poster}`} alt="Movie" className="max-h-[200px]" />
+          <img src={`${imageURL}/${poster}`} alt="Movie" className="max-h-[200px]" />
         </figure>
         <div className="card-body">
           <h2 className="card-title">{title}</h2>
