@@ -31,7 +31,7 @@ If you get error, try run :
   npm install
 ```
 
-remove pnpm if you use npm :
+remove pnpm if needed :
 
 ```bash
   rm -rf pnpm-lock.yaml node_modules
